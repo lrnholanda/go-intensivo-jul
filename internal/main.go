@@ -1,31 +1,32 @@
 package main
 
 import (
+	"database/sql"
 	"fmt"
 
-	"github.com/lrnholanda/go-intensivo-jul/entity"
+	"github.com/lrnholanda/go-intensivo-jul/entity/infra/database"
+	"github.com/lrnholanda/go-intensivo-jul/usercase"
+	_ "github.com/mattn/go-sqlite3"
 )
 
-type Car struct {
-	Model string
-	Color string
-}
-
-// metodo
-func (c Car) Start() {
-	println(c.Model, "is started")
-}
-
-func (c *Car) ChangeColor(color string) {
-	c.Color = color
-	fmt.Println("New color: ", c.Color)
-}
-
 func main() {
-	order, err := entity.NewOrder("156899009", 10, 1)
+	db, err := sql.Open("sqlite3", "db.sqlite3")
 	if err != nil {
-		fmt.Println(err.Error())
-	} else {
-		fmt.Println(order.ID)
+		panic(err)
 	}
+
+	orderRepository := database.NewOrderRepository(db)
+	uc := usercase.NewCalculateFinalPrice(orderRepository)
+
+	input := usercase.OrderInput{
+		ID:    "1234",
+		Price: 10.0,
+		Tax:   1.0,
+	}
+
+	output, err := uc.Execute(input)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(output)
 }
