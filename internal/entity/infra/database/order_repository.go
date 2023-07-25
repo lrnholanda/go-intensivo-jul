@@ -3,7 +3,7 @@ package database
 import (
 	"database/sql"
 
-	"github.com/lrnholanda/go-intensivo-jul/entity"
+	"github.com/lrnholanda/go-intensivo-jul/internal/entity"
 )
 
 type OrderRepository struct {
